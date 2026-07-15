@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Sửa hóa chất</h1>
+
+    <div class="khung-form-them">
+    <form action="/cap-nhat/{{ hc.id }}" method="POST" class="form-them-luoi">
+        <input type="number" name="code_mua" placeholder="Code mua" value="{{ hc.code_mua }}">
+        <input type="text" name="ten_sap" placeholder="Tên HC trên SAP" value="{{ hc.ten_sap }}" required>
+        <input type="text" name="ten_thuong_goi" placeholder="Tên thường gọi" value="{{ hc.ten_thuong_goi }}">
+        
+        <select name="nguon_goc">
+            <option value="">-- Nguồn gốc --</option>
+            <option value="trong_nuoc" {% if hc.nguon_goc == 'trong_nuoc' %}selected{% endif %}>Trong nước</option>
+            <option value="ngoai_nuoc" {% if hc.nguon_goc == 'ngoai_nuoc' %}selected{% endif %}>Ngoài nước</option>
+        </select>
+
+        <select name="nha_may">
+            <option value="">-- Chọn Nhà máy --</option>
+            <option value="long_hau" {% if hc.nha_may == 'long_hau' %}selected{% endif %}>Nhà máy Long Hậu</option>
+            <option value="go_vap" {% if hc.nha_may == 'go_vap' %}selected{% endif %}>Nhà máy Gò Vấp</option>
+        </select>
+
+        <input type="text" name="so_cas" placeholder="Số CAS" value="{{ hc.so_cas }}">
+        <input type="text" name="cong_thuc" placeholder="Công thức hóa học" value="{{ hc.cong_thuc }}">
+        <input type="text" name="khu_vuc_su_dung" placeholder="Khu vực sử dụng" value="{{ hc.khu_vuc_su_dung }}">
+        
+        <select name="dang_ton_tai">
+            <option value="">-- Dạng tồn tại --</option>
+            <option value="Rắn" {% if hc.dang_ton_tai == 'Rắn' %}selected{% endif %}>Rắn</option>
+            <option value="Lỏng" {% if hc.dang_ton_tai == 'Lỏng' %}selected{% endif %}>Lỏng</option>
+            <option value="Khí" {% if hc.dang_ton_tai == 'Khí' %}selected{% endif %}>Khí</option>
+        </select>
+        
+        <input type="text" name="xuat_xu" placeholder="Xuất xứ" value="{{ hc.xuat_xu }}">
+        <input type="number" name="so_luong" placeholder="Số lượng" value="{{ hc.so_luong }}" required>
+        <button type="submit">Lưu thay đổi</button>
+    </form>
+    </div>
+{% endblock %}

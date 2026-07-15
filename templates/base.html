@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>HSE Smart Chemical Management</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Thư viện hộp thoại SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <nav>
+        <div class="nav-links">
+            <a href="/">🏠 Trang chủ</a>
+            <a href="/hoa-chat">🧪 Danh sách hóa chất</a>
+            {% if session.get('role') == 'admin' %}
+            <a href="/lich-su" style="color: #fcd34d;">⏱️ Lịch sử hệ thống</a>
+            {% endif %}
+        </div>
+        <div class="nav-auth">
+            {% if session.get('role') %}
+                <div style="text-align: right; line-height: 1.2;">
+                    <span class="nav-chao">Xin chào, <strong>{{ session.get('ho_ten') }}</strong></span><br>
+                    <span style="font-size: 12px; color: #60a5fa;">{{ session.get('bo_phan') }}</span>
+                </div>
+                <a href="/logout" class="nut-dang-xuat">Đăng xuất</a>
+            {% else %}
+                <a href="/login" class="nut-dang-nhap">Đăng nhập</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <button id="nut-cuon-len" onclick="cuonLenDauTrang()" title="Lên đầu trang">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    {% if request.endpoint == 'home' %}
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h3>HSE Smart Chemical Assistant</h3>
+                <p>Nền tảng Quản lý Hóa chất & Hỗ trợ An toàn Lao động</p>
+            </div>
+            <div class="footer-info">
+                <p>&copy; 2026 Bản quyền thuộc về hệ thống quản lý nội bộ.</p>
+                <p class="highlight-text">Nghiên cứu & phát triển cho dự án đánh giá an toàn vệ sinh môi trường tại Nhà máy PNJ Long Hậu.</p>
+            </div>
+        </div>
+    </footer>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="danh-sach-header">
+    <h1 class="tieu-de-trang" style="margin: 0; left: 0; transform: none;">Nhật ký hệ thống (Audit Log)</h1>
+    <a href="/hoa-chat" class="nut-xoa-loc">⬅ Trở về Quản lý</a>
+</div>
+
+<div class="khung-bang">
+<table>
+    <thead>
+        <tr>
+            <th style="width: 80px;">STT</th>
+            <th style="width: 180px;">Thời gian</th>
+            <th style="width: 200px;">Người thao tác</th>
+            <th style="width: 200px;">Chuyền / Bộ phận</th>
+            <th style="width: 180px;">Hành động</th>
+            <th>Chi tiết thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td style="font-weight: bold; color: #4b5563;">{{ log.thoi_gian }}</td>
+            <td style="font-weight: 600; color: #111827;">{{ log.nguoi_thuc_hien }}</td>
+            <td><span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">{{ log.bo_phan }}</span></td>
+            
+            <td>
+                {% if log.hanh_dong == "Truy xuất MSDS" %}
+                    <span style="color: #059669; font-weight: 700;">📄 {{ log.hanh_dong }}</span>
+                {% elif log.hanh_dong in ["Thêm Mới", "Xóa", "Chỉnh sửa", "Cập nhật MSDS"] %}
+                    <span style="color: #dc2626; font-weight: 700;">⚙️ {{ log.hanh_dong }}</span>
+                {% else %}
+                    <span style="color: #2563eb; font-weight: 700;">👤 {{ log.hanh_dong }}</span>
+                {% endif %}
+            </td>
+            
+            <td style="text-align: left;">{{ log.chi_tiet }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+{% if logs|length == 0 %}
+<div style="text-align: center; padding: 50px; background: white; border-radius: 16px; margin-top: 20px;">
+    <p style="color: #6b7280;">Chưa có dữ liệu lịch sử nào được ghi nhận.</p>
+</div>
+{% endif %}
+{% endblock %}

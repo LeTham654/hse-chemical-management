@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="danh-sach-header">
+    <h1 class="tieu-de-trang" style="margin: 0; left: 0; transform: none;">Danh sách hóa chất</h1>
+    
+    <form action="/hoa-chat" method="GET" class="form-tim-kiem" style="margin: 0;">
+        <input type="text" name="tu_khoa" placeholder="Tìm tên, Số CAS, khu vực..." value="{{ tu_khoa }}">
+        <button type="submit">Tìm kiếm</button>
+        <a href="/hoa-chat" class="nut-xoa-loc">Xóa lọc</a>
+        {% if session.get('role') == 'admin' %}
+        <a href="/xuat-bao-cao" style="background: #10b981; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; margin-left: 10px;">📥 Xuất Báo Cáo</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if session.get('role') == 'admin' %}
+<div class="khung-form-them">
+    <h2>Thêm hóa chất mới</h2>
+    <form action="/them-hoa-chat" method="POST" class="form-them-luoi">
+        <input type="number" name="code_mua" placeholder="Code mua">
+        <input type="text" name="ten_sap" placeholder="Tên hóa chất trên SAP" required>
+        <input type="text" name="ten_thuong_goi" placeholder="Tên thường gọi">
+        
+        <select name="nguon_goc">
+            <option value="">-- Nguồn gốc --</option>
+            <option value="trong_nuoc">Trong nước</option>
+            <option value="ngoai_nuoc">Ngoài nước</option>
+        </select>
+
+        <select name="nha_may">
+            <option value="">-- Chọn Nhà máy --</option>
+            <option value="long_hau">Nhà máy Long Hậu</option>
+            <option value="go_vap">Nhà máy Gò Vấp</option>
+        </select>
+
+        <input type="text" name="so_cas" placeholder="Số CAS">
+        <input type="text" name="cong_thuc" placeholder="Công thức hóa học">
+        <input type="text" name="khu_vuc_su_dung" placeholder="Khu vực sử dụng">
+        
+        <select name="dang_ton_tai">
+            <option value="">-- Dạng tồn tại --</option>
+            <option value="Rắn">Rắn</option>
+            <option value="Lỏng">Lỏng</option>
+            <option value="Khí">Khí</option>
+        </select>
+        
+        <input type="text" name="xuat_xu" placeholder="Xuất xứ">
+        <input type="number" name="so_luong" placeholder="Số lượng" required>
+        
+        <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
+            <button type="submit" class="nut-them-moi">+ Thêm hóa chất vào hệ thống</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<div class="khung-bang">
+<table>
+    <thead>
+    <tr>
+        <th rowspan="2">STT</th>
+        <th rowspan="2">Code mua</th>
+        <th rowspan="2">Tên HC (SAP)</th>
+        <th rowspan="2">Tên thường gọi</th>
+        <th colspan="2">Nguồn gốc</th>
+        <th colspan="2">Nhà máy</th>
+        <th rowspan="2">Số CAS</th>
+        <th rowspan="2">Công thức</th>
+        <th rowspan="2">Khu vực sử dụng</th>
+        <th rowspan="2">Dạng tồn tại</th>
+        <th rowspan="2">MSDS</th>
+        <th rowspan="2">Xuất xứ</th>
+        <th rowspan="2">Số lượng</th>
+        {% if session.get('role') == 'admin' %}
+        <th rowspan="2" style="min-width: 130px;">Thao tác</th>
+        {% endif %}
+    </tr>
+    <tr>
+        <th>Trong nước</th>
+        <th>Ngoài nước</th>
+        <th>Long Hậu</th>
+        <th>Gò Vấp</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for hc in danh_sach %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ hc.code_mua }}</td>
+        <td style="font-weight: 700; color: #111827;">{{ hc.ten_sap }}</td>
+        <td>{{ hc.ten_thuong_goi }}</td>
+
+        <!-- XỬ LÝ CLICK MƯỢT MÀ BẰNG AJAX -->
+        <td class="o-chon">
+            {% if session.get('role') == 'admin' %}
+                <a href="javascript:void(0);" onclick="doiNguonGoc({{ hc.id }}, 'trong_nuoc')" id="nguon_trong_{{ hc.id }}" class="chon-trong-nuoc {% if hc.nguon_goc == 'trong_nuoc' %}da-chon{% endif %}">✔</a>
+            {% else %}
+                <div id="nguon_trong_{{ hc.id }}" class="chon-trong-nuoc {% if hc.nguon_goc == 'trong_nuoc' %}da-chon{% endif %}">✔</div>
+            {% endif %}
+        </td>
+        <td class="o-chon">
+            {% if session.get('role') == 'admin' %}
+                <a href="javascript:void(0);" onclick="doiNguonGoc({{ hc.id }}, 'ngoai_nuoc')" id="nguon_ngoai_{{ hc.id }}" class="chon-ngoai-nuoc {% if hc.nguon_goc == 'ngoai_nuoc' %}da-chon{% endif %}">✔</a>
+            {% else %}
+                <div id="nguon_ngoai_{{ hc.id }}" class="chon-ngoai-nuoc {% if hc.nguon_goc == 'ngoai_nuoc' %}da-chon{% endif %}">✔</div>
+            {% endif %}
+        </td>
+
+        <td class="o-chon">
+            {% if session.get('role') == 'admin' %}
+                <a href="javascript:void(0);" onclick="doiNhaMay({{ hc.id }}, 'long_hau')" id="nhamay_lh_{{ hc.id }}" class="chon-long-hau {% if hc.nha_may == 'long_hau' %}da-chon{% endif %}">✔</a>
+            {% else %}
+                <div id="nhamay_lh_{{ hc.id }}" class="chon-long-hau {% if hc.nha_may == 'long_hau' %}da-chon{% endif %}">✔</div>
+            {% endif %}
+        </td>
+        <td class="o-chon">
+            {% if session.get('role') == 'admin' %}
+                <a href="javascript:void(0);" onclick="doiNhaMay({{ hc.id }}, 'go_vap')" id="nhamay_gv_{{ hc.id }}" class="chon-go-vap {% if hc.nha_may == 'go_vap' %}da-chon{% endif %}">✔</a>
+            {% else %}
+                <div id="nhamay_gv_{{ hc.id }}" class="chon-go-vap {% if hc.nha_may == 'go_vap' %}da-chon{% endif %}">✔</div>
+            {% endif %}
+        </td>
+
+        <td>{{ hc.so_cas }}</td>
+        <td>{{ hc.cong_thuc }}</td>
+        <td>{{ hc.khu_vuc_su_dung }}</td>
+        <td><span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0;">{{ hc.dang_ton_tai }}</span></td>
+
+        <td class="o-msds">
+            {% if hc.msds_link %}
+                <a href="/xem-msds/{{ hc.id }}" target="_blank" class="msds-co" title="Hệ thống sẽ lưu vết khi bạn tải">📄 Xem</a>
+                {% if session.get('role') == 'admin' %}
+                <span class="msds-sua" onclick="suaMSDS({{ hc.id }})" title="Sửa link MSDS">✏️</span>
+                {% endif %}
+            {% else %}
+                {% if session.get('role') == 'admin' %}
+                <span class="msds-chua-co" onclick="suaMSDS({{ hc.id }})">+ Thêm</span>
+                {% else %}
+                <span style="color: #9ca3af; font-size: 12px; font-style: italic;">Trống</span>
+                {% endif %}
+            {% endif %}
+        </td>
+
+        <td>{{ hc.xuat_xu }}</td>
+        
+        {% set sl = hc.so_luong|int %}
+        {% if sl < 10 %}
+        <td style="font-weight: 800; color: #ef4444; font-size: 16px; background: #fee2e2;" title="Cảnh báo: Sắp hết hóa chất">⚠️ {{ hc.so_luong }}</td>
+        {% else %}
+        <td style="font-weight: 700; color: #2563eb; font-size: 16px;">{{ hc.so_luong }}</td>
+        {% endif %}
+        
+        {% if session.get('role') == 'admin' %}
+        <td class="cot-thao-tac">
+            <a href="/sua/{{ hc.id }}" class="nut-sua">Sửa</a>
+            <a href="javascript:void(0);" class="nut-xoa" onclick="xacNhanXoa({{ hc.id }})">Xóa</a>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+
+    {% set ns = namespace(tong=0, trong=0, ngoai=0, lh=0, gv=0) %}
+    {% for hc in danh_sach %}
+        {% set ns.tong = ns.tong + (hc.so_luong or 0)|int %}
+        {% if hc.nguon_goc == 'trong_nuoc' %} {% set ns.trong = ns.trong + 1 %}
+        {% elif hc.nguon_goc == 'ngoai_nuoc' %} {% set ns.ngoai = ns.ngoai + 1 %} {% endif %}
+        {% if hc.nha_may == 'long_hau' %} {% set ns.lh = ns.lh + 1 %}
+        {% elif hc.nha_may == 'go_vap' %} {% set ns.gv = ns.gv + 1 %} {% endif %}
+    {% endfor %}
+    
+    <tfoot>
+        <tr>
+            <td colspan="4" style="text-align: right; padding-right: 15px;">Thống kê Nguồn:</td>
+            <td style="color: #2563eb;" id="thongke_trong">{{ ns.trong }}</td>
+            <td style="color: #2563eb;" id="thongke_ngoai">{{ ns.ngoai }}</td>
+            <td colspan="2" style="text-align: right; padding-right: 15px;">Thống kê Nhà máy:</td>
+            <td style="color: #059669;" id="thongke_lh">{{ ns.lh }}</td>
+            <td style="color: #059669;" id="thongke_gv">{{ ns.gv }}</td>
+            <td colspan="4" style="text-align: right; font-size: 15px; padding-right: 15px;">Tổng cộng đang có:</td>
+            <td style="color: #dc2626; font-size: 18px;">{{ ns.tong }}</td>
+            {% if session.get('role') == 'admin' %}<td></td>{% endif %}
+        </tr>
+    </tfoot>
+</table>
+</div>
+
+{% if danh_sach|length == 0 %}
+<div style="text-align: center; padding: 50px; background: white; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div style="font-size: 40px; margin-bottom: 15px;">🔍</div>
+    <h3 style="color: #1f2937; margin-bottom: 10px;">Không tìm thấy hóa chất nào</h3>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- BANNER ĐẦU TRANG -->
+<div class="hero">
+    <span class="hero-canh-bao">HỆ THỐNG QUẢN LÝ HÓA CHẤT THÔNG MINH</span>
+    <h1 class="hero-tieu-de">
+        HSE Smart Chemical Assistant
+        <span class="hero-phu-de">Hệ thống quản lý hóa chất và hỗ trợ an toàn lao động</span>
+    </h1>
+    <p class="hero-mo-ta">
+        Quản lý tập trung dữ liệu hóa chất, nâng cao hiệu quả kiểm soát rủi ro và hỗ trợ ra quyết định trong công tác HSE.
+    </p>
+    <a href="/hoa-chat" class="nut-chinh">Bắt đầu quản lý</a>
+</div>
+
+<!-- THỐNG KÊ -->
+<h2 class="tieu-de-phan">Thống kê Hóa chất Toàn hệ thống</h2>
+<div class="thong-ke-luoi">
+    <div class="the-thong-ke">
+        <div class="the-icon">🏭</div>
+        <div class="the-so">{{ tk.long_hau }}</div>
+        <div class="the-nhan">Hóa chất tại Nhà máy Long Hậu</div>
+    </div>
+    <div class="the-thong-ke">
+        <div class="the-icon">🏢</div>
+        <div class="the-so">{{ tk.go_vap }}</div>
+        <div class="the-nhan">Hóa chất tại Chi nhánh Gò Vấp</div>
+    </div>
+    <div class="the-thong-ke">
+        <div class="the-icon">📊</div>
+        <div class="the-so">{{ tk.tong_cong }}</div>
+        <div class="the-nhan">Tổng số hóa chất đang quản lý</div>
+    </div>
+</div>
+
+<!-- TIỆN ÍCH -->
+<h2 class="tieu-de-phan">Nghiệp vụ hỗ trợ HSE</h2>
+<div class="tinh-nang-luoi">
+    <div class="tinh-nang-the">
+        <div class="tinh-nang-icon tinh-nang-icon-xanh">📄</div>
+        <h3>Tra cứu SDS/MSDS</h3>
+        <p>Tra cứu nhanh Phiếu an toàn hóa chất (SDS/MSDS), thông tin nhận dạng, mối nguy, PPE và biện pháp ứng phó.</p>
+    </div>
+    <div class="tinh-nang-the">
+        <div class="tinh-nang-icon tinh-nang-icon-cam">⚠️</div>
+        <h3>Quản lý cảnh báo rủi ro</h3>
+        <p>Theo dõi hóa chất nguy hiểm, hóa chất sắp hết hạn và các cảnh báo phục vụ công tác quản lý HSE.</p>
+    </div>
+    <div class="tinh-nang-the">
+        <div class="tinh-nang-icon tinh-nang-icon-do">🔥</div>
+        <h3>Hỗ trợ quản lý PCCC</h3>
+        <p>Quản lý thông tin hóa chất dễ cháy, phục vụ đánh giá nguy cơ và xây dựng phương án phòng cháy chữa cháy.</p>
+    </div>
+    <div class="tinh-nang-the">
+        <div class="tinh-nang-icon tinh-nang-icon-tim">📈</div>
+        <h3>Báo cáo & Thống kê</h3>
+        <p>Tổng hợp dữ liệu hóa chất, hỗ trợ thống kê, theo dõi và xuất báo cáo phục vụ công tác quản lý.</p>
+    </div>
+</div>
+
+{% endblock %}

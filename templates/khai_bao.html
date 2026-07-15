@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="khung-login" style="max-width: 550px;">
+    <div style="text-align: center; margin-bottom: 25px;">
+        <h2 style="color: #111827; margin-bottom: 10px;">Xác nhận danh tính</h2>
+        <p style="color: #6b7280; font-size: 14px;">Vui lòng khai báo thông tin để hệ thống ghi nhận vào nhật ký truy xuất an toàn hóa chất.</p>
+    </div>
+
+    <form action="/khai-bao" method="POST" class="form-login">
+        <label for="ho_ten">Họ và Tên của bạn:</label>
+        <input type="text" id="ho_ten" name="ho_ten" placeholder="Nhập đầy đủ họ tên..." required>
+
+        {% if role == 'user' %}
+        <label for="bo_phan" style="margin-top: 15px;">Chuyền / Bộ phận sản xuất:</label>
+        <input type="text" id="bo_phan" name="bo_phan" placeholder="VD: Chuyền Xi mạ, Bộ phận Phân kim..." required>
+        {% else %}
+        <!-- Admin tự động ghi nhận là Quản trị Hệ thống, không cần nhập bộ phận -->
+        <p style="margin-top: 15px; font-size: 14px; color: #059669; background: #d1fae5; padding: 10px; border-radius: 8px;">
+            ✔️ Bạn đang đăng nhập dưới quyền <strong>Quản trị viên (Admin)</strong>.
+        </p>
+        {% endif %}
+
+        <button type="submit" style="margin-top: 25px;">Xác nhận & Vào hệ thống</button>
+    </form>
+</div>
+{% endblock %}
