@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="danh-sach-header" style="margin-bottom: 20px;">
+    <div>
+        <h1 class="tieu-de-trang" style="position: static; transform: none; margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <span>Khu vực: <span style="color: #2563eb;">{{ ten_chuyen }}</span></span>
+            
+            <!-- HIỂN THỊ NGƯỜI PHỤ TRÁCH -->
+            <span style="font-size: 15px; color: #4b5563; font-weight: 500; border-left: 2px solid #cbd5e1; padding-left: 12px; display: inline-flex; align-items: center; gap: 5px;">
+                👤 Phụ trách: 
+                {% if phu_trach %}
+                    <strong style="color: #111827;">{{ phu_trach.chuc_danh }} {{ phu_trach.ho_ten }}</strong> 
+                    <span style="font-size: 13px; color: #6b7280;">(MS: {{ phu_trach.msnv }})</span>
+                    
+                    {% if session.get('role') == 'admin' %}
+                        <span onclick="suaPhuTrach('{{ nha_may_code }}', '{{ ten_chuyen }}', '{{ phu_trach.chuc_danh }}', '{{ phu_trach.ho_ten }}', '{{ phu_trach.msnv }}')" style="cursor: pointer; font-size: 13px; margin-left: 8px; color: #10b981; transition: 0.2s;" title="Cập nhật người phụ trách">✏️</span>
+                    {% endif %}
+                {% else %}
+                    <i style="color: #9ca3af;">Chưa cập nhật</i>
+                    
+                    {% if session.get('role') == 'admin' %}
+                        <span onclick="suaPhuTrach('{{ nha_may_code }}', '{{ ten_chuyen }}', '', '', '')" style="cursor: pointer; font-size: 13px; margin-left: 8px; color: #10b981; transition: 0.2s;" title="Cập nhật người phụ trách">✏️</span>
+                    {% endif %}
+                {% endif %}
+            </span>
+        </h1>
+        <p style="color: #6b7280; margin-top: 5px; font-weight: bold;">Cơ sở: {{ ten_nha_may }}</p>
+    </div>
+    <a href="/so-do" class="nut-xoa-loc">⬅ Trở về Sơ đồ</a>
+</div>
+
+<!-- MINI DASHBOARD 5 Ô (TỔNG - RẮN - LỎNG - KHÍ - THIẾU MSDS) -->
+<div class="mini-dashboard" style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 20px; border-radius: 12px; border: 1px solid #bfdbfe; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+        <h3 style="font-size: 32px; margin: 0; color: #1e3a8a; font-weight: 800;">{{ thong_ke['tong_loai'] }}</h3>
+        <p style="margin: 5px 0 0; color: #3b82f6; font-size: 12px; font-weight: 800; text-transform: uppercase;">TỔNG LOẠI</p>
+    </div>
+    
+    <div style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 20px; border-radius: 12px; border: 1px solid #bbf7d0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+        <h3 style="font-size: 32px; margin: 0; color: #14532d; font-weight: 800;">{{ thong_ke['so_ran'] }}</h3>
+        <p style="margin: 5px 0 0; color: #16a34a; font-size: 12px; font-weight: 800; text-transform: uppercase;">DẠNG RẮN</p>
+    </div>
+
+    <div style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); padding: 20px; border-radius: 12px; border: 1px solid #fde68a; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+        <h3 style="font-size: 32px; margin: 0; color: #92400e; font-weight: 800;">{{ thong_ke['so_long'] }}</h3>
+        <p style="margin: 5px 0 0; color: #d97706; font-size: 12px; font-weight: 800; text-transform: uppercase;">DẠNG LỎNG</p>
+    </div>
+
+    <div style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); padding: 20px; border-radius: 12px; border: 1px solid #ddd6fe; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+        <h3 style="font-size: 32px; margin: 0; color: #4c1d95; font-weight: 800;">{{ thong_ke['so_khi'] }}</h3>
+        <p style="margin: 5px 0 0; color: #7c3aed; font-size: 12px; font-weight: 800; text-transform: uppercase;">DẠNG KHÍ</p>
+    </div>
+
+    <div style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); padding: 20px; border-radius: 12px; border: 1px solid #fecaca; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;">
+        <h3 style="font-size: 32px; margin: 0; color: #991b1b; font-weight: 800;">{{ thong_ke['thieu_msds'] }}</h3>
+        <p style="margin: 5px 0 0; color: #ef4444; font-size: 12px; font-weight: 800; text-transform: uppercase;">THIẾU MSDS</p>
+    </div>
+</div>
+
+<!-- FORM THÊM HÓA CHẤT (Chỉ hiện cho Admin) -->
+{% if session.get('role') == 'admin' %}
+<div class="khung-form-them">
+    <h2>Thêm hóa chất vào khu vực này</h2>
+    <form id="form-them-ngam" class="form-them-luoi">
+        <input type="number" name="code_mua" placeholder="Code mua">
+        <input type="text" name="ten_sap" placeholder="Tên hóa chất trên SAP" required>
+        <input type="text" name="ten_thuong_goi" placeholder="Tên thường gọi">
+        
+        <select name="nguon_goc">
+            <option value="">-- Nguồn gốc --</option>
+            <option value="trong_nuoc">Trong nước</option>
+            <option value="ngoai_nuoc">Ngoài nước</option>
+        </select>
+
+        <select name="nha_may" style="display: none;">
+            <option value="long_hau" {% if 'Long Hậu' in ten_nha_may %}selected{% endif %}>Nhà máy Long Hậu</option>
+            <option value="go_vap" {% if 'Gò Vấp' in ten_nha_may %}selected{% endif %}>Nhà máy Gò Vấp</option>
+        </select>
+
+        <input type="text" name="so_cas" placeholder="Số CAS">
+        <input type="text" name="cong_thuc" placeholder="Công thức hóa học">
+        
+        <input type="text" name="khu_vuc_su_dung" placeholder="Khu vực sử dụng" value="{{ ten_chuyen }}" readonly style="background-color: #f3f4f6; color: #6b7280; font-weight: bold;">
+        
+        <select name="dang_ton_tai">
+            <option value="">-- Dạng tồn tại --</option>
+            <option value="Rắn">Rắn</option>
+            <option value="Lỏng">Lỏng</option>
+            <option value="Khí">Khí</option>
+        </select>
+        
+        <!-- CÔNG TẮC ẨN: Gắn nhãn 0 để cách ly dữ liệu khỏi Bảng Tổng -->
+        <input type="hidden" name="is_master" value="0">
+        
+        <input type="text" name="xuat_xu" placeholder="Xuất xứ">
+        <input type="number" name="so_luong" placeholder="Số lượng" required>
+        
+        <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
+            <button type="submit" class="nut-them-moi">+ Thêm hóa chất</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+<!-- BẢNG HÓA CHẤT CỦA CHUYỀN -->
+<div class="khung-bang">
+<table>
+    <thead>
+    <tr>
+        <th rowspan="2">STT</th>
+        <th rowspan="2">Tên HC (SAP)</th>
+        <th rowspan="2">Tên thường gọi</th> 
+        <th colspan="2">Nguồn gốc</th>
+        <th rowspan="2">Số CAS</th>
+        <th rowspan="2">Khu vực sử dụng</th>
+        <th rowspan="2">Dạng tồn tại</th>
+        <th rowspan="2">MSDS</th>
+        <th rowspan="2">Số lượng</th>
+        {% if session.get('role') == 'admin' %}
+        <th rowspan="2" style="min-width: 130px;">Thao tác</th>
+        {% endif %}
+    </tr>
+    <tr>
+        <th>Trong nước</th>
+        <th>Ngoài nước</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    {% for hc in danh_sach %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td style="font-weight: 700; color: #111827;">{{ hc.ten_sap }}</td>
+        <td>{{ hc.ten_thuong_goi }}</td> 
+
+        <td class="o-chon">
+            {% if session.get('role') == 'admin' %}
+                <a href="javascript:void(0);" onclick="doiNguonGoc({{ hc.id }}, 'trong_nuoc')" id="nguon_trong_{{ hc.id }}" class="chon-trong-nuoc {% if hc.nguon_goc == 'trong_nuoc' %}da-chon{% endif %}">✔</a>
+            {% else %}
+                <div id="nguon_trong_{{ hc.id }}" class="chon-trong-nuoc {% if hc.nguon_goc == 'trong_nuoc' %}da-chon{% endif %}">✔</div>
+            {% endif %}
+        </td>
+        <td class="o-chon">
+            {% if session.get('role') == 'admin' %}
+                <a href="javascript:void(0);" onclick="doiNguonGoc({{ hc.id }}, 'ngoai_nuoc')" id="nguon_ngoai_{{ hc.id }}" class="chon-ngoai-nuoc {% if hc.nguon_goc == 'ngoai_nuoc' %}da-chon{% endif %}">✔</a>
+            {% else %}
+                <div id="nguon_ngoai_{{ hc.id }}" class="chon-ngoai-nuoc {% if hc.nguon_goc == 'ngoai_nuoc' %}da-chon{% endif %}">✔</div>
+            {% endif %}
+        </td>
+
+        <td>{{ hc.so_cas }}</td>
+        <td>{{ hc.khu_vuc_su_dung }}</td>
+        <td><span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid #e2e8f0;">{{ hc.dang_ton_tai }}</span></td>
+
+        <td class="o-msds">
+            {% if hc.msds_link %}
+                <a href="/xem-msds/{{ hc.id }}" target="_blank" class="msds-co" title="Hệ thống sẽ lưu vết khi bạn tải">📄 Xem</a>
+                {% if session.get('role') == 'admin' %}
+                <span class="msds-sua" onclick="suaMSDS({{ hc.id }})" title="Sửa link MSDS">✏️</span>
+                {% endif %}
+            {% else %}
+                {% if session.get('role') == 'admin' %}
+                <span class="msds-chua-co" onclick="suaMSDS({{ hc.id }})">+ Thêm</span>
+                {% else %}
+                <span style="color: #9ca3af; font-size: 12px; font-style: italic;">Trống</span>
+                {% endif %}
+            {% endif %}
+        </td>
+
+        {% set sl = hc.so_luong|int %}
+        {% if sl < 10 %}
+        <td style="font-weight: 800; color: #ef4444; font-size: 16px; background: #fee2e2;" title="Cảnh báo: Sắp hết hóa chất">⚠️ {{ hc.so_luong }}</td>
+        {% else %}
+        <td style="font-weight: 700; color: #2563eb; font-size: 16px;">{{ hc.so_luong }}</td>
+        {% endif %}
+        
+        {% if session.get('role') == 'admin' %}
+        <td class="cot-thao-tac">
+    <button onclick="suaHoaChatAJAX({{ hc.id }})" class="nut-sua" style="border:none; cursor:pointer; font-family:inherit;">Sửa</button>
+    <button onclick="xacNhanXoaAJAX({{ hc.id }})" class="nut-xoa" style="border:none; cursor:pointer; font-family:inherit;">Xóa</button>
+        </td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+
+    {% set ns = namespace(tong=0, trong=0, ngoai=0) %}
+    {% for hc in danh_sach %}
+        {% set ns.tong = ns.tong + (hc.so_luong or 0)|int %}
+        {% if hc.nguon_goc == 'trong_nuoc' %} {% set ns.trong = ns.trong + 1 %}
+        {% elif hc.nguon_goc == 'ngoai_nuoc' %} {% set ns.ngoai = ns.ngoai + 1 %} {% endif %}
+    {% endfor %}
+    
+    <tfoot>
+        <tr>
+            <td colspan="3" style="text-align: right; padding-right: 15px;">Thống kê Nguồn gốc:</td>
+            <td style="color: #2563eb;" id="thongke_trong">{{ ns.trong }}</td>
+            <td style="color: #2563eb;" id="thongke_ngoai">{{ ns.ngoai }}</td>
+            <td colspan="4" style="text-align: right; font-size: 15px; padding-right: 15px;">Tổng cộng đang có:</td>
+            <td style="color: #dc2626; font-size: 18px;">{{ ns.tong }}</td>
+            {% if session.get('role') == 'admin' %}<td></td>{% endif %}
+        </tr>
+    </tfoot>
+</table>
+</div>
+
+{% if danh_sach|length == 0 %}
+<div style="text-align: center; padding: 50px; background: white; border-radius: 12px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div style="font-size: 40px; margin-bottom: 15px;">🔍</div>
+    <h3 style="color: #1f2937; margin-bottom: 10px;">Chuyền này hiện chưa ghi nhận hóa chất nào.</h3>
+</div>
+{% endif %}
+
+<!-- SCRIPT GỌI POPUP ĐIỀN THÔNG TIN (CHỈ ADMIN THẤY) -->
+{% if session.get('role') == 'admin' %}
+<script>
+function suaPhuTrach(nhaMay, tenChuyen, curChucDanh, curHoTen, curMsnv) {
+    Swal.fire({
+        title: 'Cập nhật Người Phụ Trách',
+        html: `
+            <form id="form-phu-trach" action="/cap-nhat-phu-trach" method="POST" style="text-align: left;">
+                <input type="hidden" name="nha_may" value="${nhaMay}">
+                <input type="hidden" name="ten_chuyen" value="${tenChuyen}">
+                
+                <label style="font-weight: bold; font-size: 14px; margin-bottom: 5px; display: block; color: #374151;">Chức danh:</label>
+                <input type="text" name="chuc_danh" value="${curChucDanh}" class="swal2-input" style="width: 100%; margin: 0 0 15px 0; box-sizing: border-box;" placeholder="VD: Quản đốc, Tổ trưởng...">
+                
+                <label style="font-weight: bold; font-size: 14px; margin-bottom: 5px; display: block; color: #374151;">Họ và Tên:</label>
+                <input type="text" name="ho_ten" value="${curHoTen}" class="swal2-input" style="width: 100%; margin: 0 0 15px 0; box-sizing: border-box;" placeholder="Nhập đầy đủ họ tên..." required>
+                
+                <label style="font-weight: bold; font-size: 14px; margin-bottom: 5px; display: block; color: #374151;">MSNV (Mã số nhân viên):</label>
+                <input type="text" name="msnv" value="${curMsnv}" class="swal2-input" style="width: 100%; margin: 0 0 15px 0; box-sizing: border-box;" placeholder="VD: PNJ12345..." required>
+            </form>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Lưu thông tin',
+        cancelButtonText: 'Hủy bỏ',
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#6b7280',
+        preConfirm: () => {
+            document.getElementById('form-phu-trach').submit();
+        }
+    });
+}
+</script>
+{% endif %}
+{% endblock %}

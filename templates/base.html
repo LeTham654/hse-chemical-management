@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>HSE Smart Chemical Management</title>
+    
+    <!-- THÊM DÒNG NÀY ĐỂ ĐỔI ICON QUẢ ĐỊA CẦU THÀNH ỐNG NGHIỆM 🧪 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='layout_sodo.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Thư viện hộp thoại SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <nav>
         <div class="nav-links">
             <a href="/">🏠 Trang chủ</a>
+            
+            <!-- ĐÃ KHÔI PHỤC LẠI LINK DANH SÁCH HÓA CHẤT TỔNG -->
             <a href="/hoa-chat">🧪 Danh sách hóa chất</a>
+            
+            <a href="/so-do" style="color: #60a5fa; font-weight: bold;">📍 Sơ đồ khu vực</a>
             {% if session.get('role') == 'admin' %}
             <a href="/lich-su" style="color: #fcd34d;">⏱️ Lịch sử hệ thống</a>
             {% endif %}
@@ -38,7 +46,7 @@
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
     </button>
 
-    {% if request.endpoint == 'home' %}
+    {% if request.endpoint == 'index' %}
     <footer class="site-footer">
         <div class="footer-container">
             <div class="footer-logo">
@@ -54,5 +62,8 @@
     {% endif %}
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <button id="nut-cuon-len" onclick="cuonLenDauTrang()" title="Lên đầu trang">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
 </body>
 </html>

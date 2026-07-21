@@ -143,3 +143,69 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
     .footer-container { flex-direction: column; text-align: center; }
     .footer-info { text-align: center; }
 }
+.nav-auth a, 
+.nut-dang-nhap, 
+.nut-dang-xuat {
+    text-decoration: none !important;
+}
+/* ====================================================
+   LÀM NỔI BẬT KHUNG THÊM HÓA CHẤT
+==================================================== */
+.khung-form-them {
+    background: linear-gradient(to right bottom, #ffffff, #eff6ff) !important; /* Nền gradient trắng ngả xanh nhạt */
+    border: 2px solid #3b82f6 !important; /* Viền xanh dương đậm, dày hơn */
+    border-radius: 16px !important;
+    padding: 30px !important;
+    margin-bottom: 40px !important;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.15) !important; /* Đổ bóng màu xanh lan tỏa */
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hiệu ứng nhè nhẹ khi rê chuột vào khung */
+.khung-form-them:hover {
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.25) !important;
+    transform: translateY(-2px);
+}
+
+/* Gắn thêm cái nhãn "Khu vực nhập liệu" nổi lên trên viền */
+.khung-form-them::before {
+    content: "✍️ KHU VỰC THÊM MỚI";
+    position: absolute;
+    top: -14px;
+    left: 25px;
+    background: #2563eb;
+    color: white;
+    padding: 4px 15px;
+    font-size: 13px;
+    font-weight: 800;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
+}
+
+/* Tiêu đề bên trong khung */
+.khung-form-them h2 {
+    color: #1e3a8a !important;
+    margin-top: 5px !important;
+    margin-bottom: 25px !important;
+    font-size: 22px !important;
+    border-bottom: 2px dashed #bfdbfe;
+    padding-bottom: 12px;
+}
+
+/* Làm nút "Thêm hóa chất" to và bắt mắt hơn */
+.khung-form-them .nut-them-moi {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    font-size: 16px !important;
+    padding: 12px 25px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4) !important;
+    transition: 0.2s;
+}
+
+.khung-form-them .nut-them-moi:hover {
+    transform: scale(1.05);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+}

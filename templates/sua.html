@@ -5,6 +5,9 @@
 
     <div class="khung-form-them">
     <form action="/cap-nhat/{{ hc.id }}" method="POST" class="form-them-luoi">
+        <!-- Input ẩn lưu URL trước đó -->
+        <input type="hidden" name="referrer" value="{{ referrer }}">
+        
         <input type="number" name="code_mua" placeholder="Code mua" value="{{ hc.code_mua }}">
         <input type="text" name="ten_sap" placeholder="Tên HC trên SAP" value="{{ hc.ten_sap }}" required>
         <input type="text" name="ten_thuong_goi" placeholder="Tên thường gọi" value="{{ hc.ten_thuong_goi }}">
@@ -34,7 +37,10 @@
         
         <input type="text" name="xuat_xu" placeholder="Xuất xứ" value="{{ hc.xuat_xu }}">
         <input type="number" name="so_luong" placeholder="Số lượng" value="{{ hc.so_luong }}" required>
-        <button type="submit">Lưu thay đổi</button>
+        
+        <div style="grid-column: 1 / -1; margin-top: 10px;">
+            <button type="submit" style="padding: 12px 24px; background: var(--primary); color: white; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; width: 100%;">Lưu thay đổi</button>
+        </div>
     </form>
     </div>
 {% endblock %}

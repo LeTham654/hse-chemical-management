@@ -12,27 +12,95 @@
     <p class="hero-mo-ta">
         Quản lý tập trung dữ liệu hóa chất, nâng cao hiệu quả kiểm soát rủi ro và hỗ trợ ra quyết định trong công tác HSE.
     </p>
-    <a href="/hoa-chat" class="nut-chinh">Bắt đầu quản lý</a>
+    <!-- ĐÃ SỬA: Nút này giờ dẫn thẳng vào Danh mục hóa chất tổng -->
+    <a href="/hoa-chat" class="nut-chinh">Truy cập Danh mục Hóa chất Tổng</a>
 </div>
 
-<!-- THỐNG KÊ -->
+<!-- THỐNG KÊ TỔNG -->
 <h2 class="tieu-de-phan">Thống kê Hóa chất Toàn hệ thống</h2>
 <div class="thong-ke-luoi">
-    <div class="the-thong-ke">
-        <div class="the-icon">🏭</div>
-        <div class="the-so">{{ tk.long_hau }}</div>
-        <div class="the-nhan">Hóa chất tại Nhà máy Long Hậu</div>
-    </div>
-    <div class="the-thong-ke">
-        <div class="the-icon">🏢</div>
-        <div class="the-so">{{ tk.go_vap }}</div>
-        <div class="the-nhan">Hóa chất tại Chi nhánh Gò Vấp</div>
-    </div>
-    <div class="the-thong-ke">
-        <div class="the-icon">📊</div>
-        <div class="the-so">{{ tk.tong_cong }}</div>
-        <div class="the-nhan">Tổng số hóa chất đang quản lý</div>
-    </div>
+    <!-- ĐÃ SỬA: Bấm vào thẻ thống kê sẽ bay thẳng qua trang Danh mục tổng -->
+    <a href="/hoa-chat" style="text-decoration: none; color: inherit; display: block;">
+        <div class="the-thong-ke">
+            <div class="the-icon">🏭</div>
+            <div class="the-so">{{ tk.long_hau }}</div>
+            <div class="the-nhan">Hóa chất tại Nhà máy Long Hậu</div>
+        </div>
+    </a>
+    
+    <a href="/hoa-chat" style="text-decoration: none; color: inherit; display: block;">
+        <div class="the-thong-ke">
+            <div class="the-icon">🏢</div>
+            <div class="the-so">{{ tk.go_vap }}</div>
+            <div class="the-nhan">Hóa chất tại Chi nhánh Gò Vấp</div>
+        </div>
+    </a>
+    
+    <a href="/hoa-chat" style="text-decoration: none; color: inherit; display: block;">
+        <div class="the-thong-ke">
+            <div class="the-icon">📊</div>
+            <div class="the-so">{{ tk.tong_cong }}</div>
+            <div class="the-nhan">Tổng số lượng hóa chất quản lý</div>
+        </div>
+    </a>
+</div>
+
+<!-- BẢNG BÁO CÁO 1: NHÀ MÁY LONG HẬU -->
+<h2 class="tieu-de-phan" style="margin-top: 50px; text-align: left; border-left: 6px solid #2563eb; padding-left: 15px;">Báo cáo Khu vực: Nhà máy PNJ Long Hậu</h2>
+<div class="khung-bang" style="margin-bottom: 40px;">
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th style="text-align: left;">Chuyền / Bộ phận sản xuất</th>
+                <th>Tổng số loại Hóa chất</th>
+                <th>Tổng khối lượng (Đang lưu trữ)</th>
+                <th>Truy cập</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in bao_cao_lh %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td style="font-weight: 700; color: #1e3a8a; text-align: left;">{{ row.ten_chuyen }}</td>
+                <td style="color: #2563eb; font-weight: bold; font-size: 16px;">{{ row.so_loai }}</td>
+                <td style="color: #dc2626; font-weight: bold; font-size: 16px;">{{ row.tong_so_luong }}</td>
+                <td>
+                    <a href="/bo-phan/long_hau/{{ row.ten_chuyen }}" class="nut-sua" style="background: #10b981; border: none; font-size: 12px; padding: 6px 12px;">Xem chi tiết ➡️</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- BẢNG BÁO CÁO 2: NHÀ MÁY GÒ VẤP -->
+<h2 class="tieu-de-phan" style="text-align: left; border-left: 6px solid #f59e0b; padding-left: 15px;">Báo cáo Khu vực: Nhà máy PNJP Gò Vấp</h2>
+<div class="khung-bang" style="margin-bottom: 70px;">
+    <table>
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th style="text-align: left;">Chuyền / Bộ phận sản xuất</th>
+                <th>Tổng số loại Hóa chất</th>
+                <th>Tổng khối lượng (Đang lưu trữ)</th>
+                <th>Truy cập</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in bao_cao_gv %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td style="font-weight: 700; color: #92400e; text-align: left;">{{ row.ten_chuyen }}</td>
+                <td style="color: #2563eb; font-weight: bold; font-size: 16px;">{{ row.so_loai }}</td>
+                <td style="color: #dc2626; font-weight: bold; font-size: 16px;">{{ row.tong_so_luong }}</td>
+                <td>
+                    <a href="/bo-phan/go_vap/{{ row.ten_chuyen }}" class="nut-sua" style="background: #10b981; border: none; font-size: 12px; padding: 6px 12px;">Xem chi tiết ➡️</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <!-- TIỆN ÍCH -->

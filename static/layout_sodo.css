@@ -1,0 +1,101 @@
+/* Giao diện trang Sơ đồ nhà máy CỰC XỊN */
+.sodo-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    margin-top: 30px;
+}
+.factory-card {
+    background: #ffffff;
+    border-top: 6px solid #1e3a8a;
+    border-radius: 16px;
+    width: 46%;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+}
+.factory-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+}
+.factory-card h2 {
+    color: #1e3a8a;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Sắp xếp các chuyền thành dạng Grid 2 cột cho đỡ dài */
+.chuyen-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.chuyen-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: #f8fafc;
+    color: #334155;
+    padding: 14px 16px;
+    text-decoration: none;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease-in-out;
+    font-weight: 700;
+    font-size: 14px;
+}
+.chuyen-btn::before {
+    content: '🏭';
+    margin-right: 10px;
+    font-size: 16px;
+}
+.chuyen-btn:hover {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Giao diện Mini-Dashboard của từng chuyền */
+.mini-dashboard {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.stat-box {
+    flex: 1;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border-left: 4px solid #17a2b8;
+}
+.stat-box h3 {
+    margin: 0;
+    font-size: 32px;
+    color: #333;
+}
+.stat-box p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+.stat-box.warning { border-left-color: #ffc107; }
+.stat-box.danger { border-left-color: #dc3545; }
+
+/* Mobile responsive */
+@media (max-width: 900px) {
+    .factory-card { width: 100%; }
+    .chuyen-list { grid-template-columns: 1fr; }
+    .mini-dashboard { flex-direction: column; }
+}

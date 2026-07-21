@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="text-align: center; margin-bottom: 10px;">Sơ Đồ Phân Cấp Khu Vực Sản Xuất</h1>
+<p style="text-align: center; color: #666;">Chọn nhà máy và bộ phận để xem danh mục hóa chất tương ứng</p>
+
+<div class="sodo-container">
+    {% for ma_nha_may, thong_tin in cau_truc.items() %}
+    <div class="factory-card">
+        <h2>{{ thong_tin['ten'] }}</h2>
+        <div class="chuyen-list">
+            {% for chuyen in thong_tin['chuyen'] %}
+                <a href="/bo-phan/{{ ma_nha_may }}/{{ chuyen }}" class="chuyen-btn">
+                    📍 {{ chuyen }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

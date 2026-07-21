@@ -2,19 +2,16 @@ import sqlite3
 import os
 from datetime import datetime
 
-# Lấy đường dẫn thư mục hiện tại để PythonAnywhere nhận diện đúng file db
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "hse.db")
 
 def ket_noi_db():
-    # Sử dụng DB_PATH thay vì chỉ ghi "hse.db"
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 def tao_bang():
     conn = ket_noi_db()
-    # Bảng Hóa Chất
     conn.execute("""
         CREATE TABLE IF NOT EXISTS chemicals (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,7 +29,19 @@ def tao_bang():
             so_luong INTEGER
         )
     """)
-    # Bảng Lịch sử hệ thống (Lưu vết)
+    
+    # 1. Thêm cột phân thân dữ liệu
+    try:
+        conn.execute("ALTER TABLE chemicals ADD COLUMN is_master INTEGER DEFAULT 1")
+    except:
+        pass
+        
+    # 2. LỆNH GIẢI CỨU DỮ LIỆU: Tự động đưa dữ liệu bị ẩn quay về Bảng Tổng
+    count_total = conn.execute("SELECT COUNT(id) FROM chemicals").fetchone()[0]
+    count_master = conn.execute("SELECT COUNT(id) FROM chemicals WHERE is_master = 1").fetchone()[0]
+    if count_total > 0 and count_master == 0:
+        conn.execute("UPDATE chemicals SET is_master = 1")
+        
     conn.execute("""
         CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,6 +50,16 @@ def tao_bang():
             hanh_dong TEXT,
             chi_tiet TEXT,
             thoi_gian TEXT
+        )
+    """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS phu_trach (
+            nha_may TEXT,
+            ten_chuyen TEXT,
+            chuc_danh TEXT,
+            ho_ten TEXT,
+            msnv TEXT,
+            PRIMARY KEY (nha_may, ten_chuyen)
         )
     """)
     conn.commit()
@@ -62,21 +81,81 @@ def lay_lich_su():
     conn.close()
     return ket_qua
 
+# ================= HÀM CHO BẢNG TỔNG =================
 def lay_tat_ca_hoa_chat():
     conn = ket_noi_db()
-    ket_qua = conn.execute("SELECT * FROM chemicals ORDER BY id").fetchall()
+    # Đã sửa DESC thành ASC
+    ket_qua = conn.execute("SELECT * FROM chemicals WHERE is_master = 1 ORDER BY id ASC").fetchall()
     conn.close()
     return ket_qua
 
-def them_hoa_chat(d):
+def tim_kiem_hoa_chat(tu_khoa):
+    conn = ket_noi_db()
+    tk = '%' + tu_khoa + '%'
+    # Đã sửa DESC thành ASC
+    ket_qua = conn.execute("""
+        SELECT * FROM chemicals
+        WHERE is_master = 1
+        AND (code_mua LIKE ? OR ten_sap LIKE ? OR ten_thuong_goi LIKE ? 
+           OR so_cas LIKE ? OR cong_thuc LIKE ? OR khu_vuc_su_dung LIKE ? OR dang_ton_tai LIKE ? OR xuat_xu LIKE ?)
+        ORDER BY id ASC
+    """, (tk, tk, tk, tk, tk, tk, tk, tk)).fetchall()
+    conn.close()
+    return ket_qua
+
+def lay_thong_ke_nha_may():
+    conn = ket_noi_db()
+    lh = conn.execute("SELECT SUM(so_luong) FROM chemicals WHERE nha_may = 'long_hau' AND is_master = 1").fetchone()[0]
+    gv = conn.execute("SELECT SUM(so_luong) FROM chemicals WHERE nha_may = 'go_vap' AND is_master = 1").fetchone()[0]
+    tong = conn.execute("SELECT SUM(so_luong) FROM chemicals WHERE is_master = 1").fetchone()[0]
+    conn.close()
+    return {
+        "long_hau": lh if lh else 0,
+        "go_vap": gv if gv else 0,
+        "tong_cong": tong if tong else 0
+    }
+
+# ================= HÀM CHO BẢNG CHUYỀN =================
+def lay_hoa_chat_theo_bo_phan(nha_may, bo_phan):
+    conn = ket_noi_db()
+    # Đã sửa DESC thành ASC
+    ket_qua = conn.execute("""
+        SELECT * FROM chemicals 
+        WHERE nha_may = ? AND khu_vuc_su_dung = ? AND is_master = 0
+        ORDER BY id ASC
+    """, (nha_may, bo_phan)).fetchall()
+    conn.close()
+    return ket_qua
+
+def thong_ke_bo_phan(nha_may, bo_phan):
+    conn = ket_noi_db()
+    tong_loai = conn.execute("SELECT COUNT(id) FROM chemicals WHERE nha_may = ? AND khu_vuc_su_dung = ? AND is_master = 0", (nha_may, bo_phan)).fetchone()[0]
+    tong_so_luong = conn.execute("SELECT SUM(so_luong) FROM chemicals WHERE nha_may = ? AND khu_vuc_su_dung = ? AND is_master = 0", (nha_may, bo_phan)).fetchone()[0]
+    so_ran = conn.execute("SELECT COUNT(id) FROM chemicals WHERE nha_may = ? AND khu_vuc_su_dung = ? AND dang_ton_tai = 'Rắn' AND is_master = 0", (nha_may, bo_phan)).fetchone()[0]
+    so_long = conn.execute("SELECT COUNT(id) FROM chemicals WHERE nha_may = ? AND khu_vuc_su_dung = ? AND dang_ton_tai = 'Lỏng' AND is_master = 0", (nha_may, bo_phan)).fetchone()[0]
+    so_khi = conn.execute("SELECT COUNT(id) FROM chemicals WHERE nha_may = ? AND khu_vuc_su_dung = ? AND dang_ton_tai = 'Khí' AND is_master = 0", (nha_may, bo_phan)).fetchone()[0]
+    thieu_msds = conn.execute("SELECT COUNT(id) FROM chemicals WHERE nha_may = ? AND khu_vuc_su_dung = ? AND (msds_link IS NULL OR msds_link = '') AND is_master = 0", (nha_may, bo_phan)).fetchone()[0]
+    conn.close()
+    
+    return {
+        "tong_loai": tong_loai if tong_loai else 0,
+        "tong_so_luong": tong_so_luong if tong_so_luong else 0,
+        "so_ran": so_ran if so_ran else 0,
+        "so_long": so_long if so_long else 0,
+        "so_khi": so_khi if so_khi else 0,
+        "thieu_msds": thieu_msds if thieu_msds else 0
+    }
+# ================= CRUD DÙNG CHUNG =================
+def them_hoa_chat(d, is_master=1):
     conn = ket_noi_db()
     conn.execute("""
         INSERT INTO chemicals
-        (code_mua, ten_sap, ten_thuong_goi, nguon_goc, nha_may, so_cas, cong_thuc, khu_vuc_su_dung, dang_ton_tai, xuat_xu, so_luong)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (code_mua, ten_sap, ten_thuong_goi, nguon_goc, nha_may, so_cas, cong_thuc, khu_vuc_su_dung, dang_ton_tai, xuat_xu, so_luong, is_master)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        d["code_mua"], d["ten_sap"], d["ten_thuong_goi"], d["nguon_goc"], d["nha_may"], d["so_cas"],
-        d["cong_thuc"], d["khu_vuc_su_dung"], d["dang_ton_tai"], d["xuat_xu"], d["so_luong"]
+        d.get("code_mua", ""), d["ten_sap"], d.get("ten_thuong_goi", ""), d.get("nguon_goc", ""), 
+        d.get("nha_may", ""), d.get("so_cas", ""), d.get("cong_thuc", ""), 
+        d.get("khu_vuc_su_dung", ""), d.get("dang_ton_tai", ""), d.get("xuat_xu", ""), d.get("so_luong", 0), is_master
     ))
     conn.commit()
     conn.close()
@@ -101,8 +180,9 @@ def cap_nhat_hoa_chat(id, d):
             cong_thuc = ?, khu_vuc_su_dung = ?, dang_ton_tai = ?, xuat_xu = ?, so_luong = ?
         WHERE id = ?
     """, (
-        d["code_mua"], d["ten_sap"], d["ten_thuong_goi"], d["nguon_goc"], d["nha_may"], d["so_cas"],
-        d["cong_thuc"], d["khu_vuc_su_dung"], d["dang_ton_tai"], d["xuat_xu"], d["so_luong"], id
+        d.get("code_mua", ""), d["ten_sap"], d.get("ten_thuong_goi", ""), d.get("nguon_goc", ""), 
+        d.get("nha_may", ""), d.get("so_cas", ""), d.get("cong_thuc", ""), 
+        d.get("khu_vuc_su_dung", ""), d.get("dang_ton_tai", ""), d.get("xuat_xu", ""), d.get("so_luong", 0), id
     ))
     conn.commit()
     conn.close()
@@ -125,27 +205,17 @@ def cap_nhat_msds(id, link):
     conn.commit()
     conn.close()
 
-def tim_kiem_hoa_chat(tu_khoa):
+def lay_nguoi_phu_trach(nha_may, ten_chuyen):
     conn = ket_noi_db()
-    tk = '%' + tu_khoa + '%'
-    ket_qua = conn.execute("""
-        SELECT * FROM chemicals
-        WHERE code_mua LIKE ? OR ten_sap LIKE ? OR ten_thuong_goi LIKE ? 
-           OR so_cas LIKE ? OR cong_thuc LIKE ? OR khu_vuc_su_dung LIKE ?
-           OR dang_ton_tai LIKE ? OR xuat_xu LIKE ?
-        ORDER BY id
-    """, (tk, tk, tk, tk, tk, tk, tk, tk)).fetchall()
+    kq = conn.execute("SELECT * FROM phu_trach WHERE nha_may = ? AND ten_chuyen = ?", (nha_may, ten_chuyen)).fetchone()
     conn.close()
-    return ket_qua
+    return kq
 
-def lay_thong_ke_nha_may():
+def cap_nhat_nguoi_phu_trach(nha_may, ten_chuyen, chuc_danh, ho_ten, msnv):
     conn = ket_noi_db()
-    lh = conn.execute("SELECT SUM(so_luong) FROM chemicals WHERE nha_may = 'long_hau'").fetchone()[0]
-    gv = conn.execute("SELECT SUM(so_luong) FROM chemicals WHERE nha_may = 'go_vap'").fetchone()[0]
-    tong = conn.execute("SELECT SUM(so_luong) FROM chemicals").fetchone()[0]
+    conn.execute("""
+        INSERT OR REPLACE INTO phu_trach (nha_may, ten_chuyen, chuc_danh, ho_ten, msnv)
+        VALUES (?, ?, ?, ?, ?)
+    """, (nha_may, ten_chuyen, chuc_danh, ho_ten, msnv))
+    conn.commit()
     conn.close()
-    return {
-        "long_hau": lh if lh else 0,
-        "go_vap": gv if gv else 0,
-        "tong_cong": tong if tong else 0
-    }
