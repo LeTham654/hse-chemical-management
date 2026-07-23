@@ -77,7 +77,7 @@ function suaMSDS(id) {
     Swal.fire({
         title: 'Cập nhật link MSDS',
         input: 'url',
-        inputLabel: 'Dán đường link Google Drive hoặc trang PDF vào đây',
+        inputLabel: 'Dán đường link Google Drive hoặc trang PDF online vào đây',
         inputPlaceholder: 'https://...',
         icon: 'info',
         showCancelButton: true,
