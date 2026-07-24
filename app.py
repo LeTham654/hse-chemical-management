@@ -18,7 +18,7 @@ CAU_TRUC_NHA_MAY = {
     },
     "go_vap": {
         "ten": "Nhà máy PNJP Gò Vấp",
-        "chuyen": ["Xưởng Chế Tác Vàng", "Xưởng Chế Tác Bạc", "Phòng Kiểm Định", "Khu Xử Lý Nước Thải"]
+        "chuyen": ["Phòng Kiểm Định", "Khu Xử Lý Nước Thải"]
     }
 }
 
@@ -45,7 +45,7 @@ def khai_bao():
     if request.method == "POST":
         session['ho_ten'] = request.form.get("ho_ten")
         if role == 'admin':
-            session['bo_phan'] = 'Ban Giám Đốc / HSE'
+            session['bo_phan'] = 'Quản trị viên / HSE'
             db.ghi_log(session['ho_ten'], session['bo_phan'], "Đăng nhập", f"Quản trị viên {session['ho_ten']} đăng nhập vào hệ thống")
         else:
             session['bo_phan'] = request.form.get("bo_phan")
