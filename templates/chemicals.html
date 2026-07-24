@@ -16,10 +16,15 @@
     </form>
 </div>
 
-<!-- Nút kích hoạt Form trượt -->
-<div style="text-align: center; margin-bottom: 20px;">
+<!-- Nút kích hoạt Form trượt và Xuất Excel -->
+<div style="text-align: center; margin-bottom: 20px; display: flex; justify-content: center; gap: 15px;">
     <button id="btnToggleForm" class="btn-open-form" type="button">
         + THÊM HÓA CHẤT MỚI
+    </button>
+    
+    <!-- NÚT XUẤT EXCEL MỚI -->
+    <button onclick="xuatExcel()" class="btn-excel" type="button">
+        📊 XUẤT FILE EXCEL
     </button>
 </div>
 
@@ -208,8 +213,9 @@
 </div>
 {% endif %}
 
-<!-- Javascript điều khiển nút Ẩn/Hiện Form -->
+<!-- Javascript điều khiển nút Ẩn/Hiện Form và Xuất Excel -->
 <script>
+    // Điều khiển form
     document.getElementById('btnToggleForm').addEventListener('click', function() {
         var form = document.getElementById('formThemMoi');
         if (form.style.display === 'none' || form.style.display === '') {
@@ -222,6 +228,24 @@
             this.classList.remove('btn-close-form');
         }
     });
+
+    // Xuất file Excel
+    function xuatExcel() {
+        var tableHtml = document.querySelector('.khung-bang table').outerHTML;
+        
+        var template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Danh_Muc_Hoa_Chat</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>' + tableHtml + '</body></html>';
+        
+        var blob = new Blob(['\ufeff', template], { type: 'application/vnd.ms-excel' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        
+        var ngayHomNay = new Date().toLocaleDateString('vi-VN').replace(/\//g, '-');
+        a.download = 'Danh_Muc_Hoa_Chat_PNJ_' + ngayHomNay + '.xls';
+        
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 </script>
 
 {% endblock %}

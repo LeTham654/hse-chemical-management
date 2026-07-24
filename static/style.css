@@ -70,10 +70,10 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
     display: flex; justify-content: center; align-items: center; 
     width: 32px; height: 32px; margin: 0 auto; 
     font-weight: 800; text-decoration: none; border-radius: 6px; transition: all 0.2s;
-    color: transparent; /* Tàng hình dấu ✔ */
+    color: transparent; 
 }
 .o-chon .da-chon { 
-    color: var(--primary); /* Hiện dấu ✔ lên */
+    color: var(--primary); 
     background: #dbeafe; 
 }
 .o-chon a:hover:not(.da-chon) { background: #f1f5f9; color: #cbd5e1; }
@@ -148,27 +148,24 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
 .nut-dang-xuat {
     text-decoration: none !important;
 }
+
 /* ====================================================
    LÀM NỔI BẬT KHUNG THÊM HÓA CHẤT
 ==================================================== */
 .khung-form-them {
-    background: linear-gradient(to right bottom, #ffffff, #eff6ff) !important; /* Nền gradient trắng ngả xanh nhạt */
-    border: 2px solid #3b82f6 !important; /* Viền xanh dương đậm, dày hơn */
+    background: linear-gradient(to right bottom, #ffffff, #eff6ff) !important;
+    border: 2px solid #3b82f6 !important;
     border-radius: 16px !important;
     padding: 30px !important;
     margin-bottom: 40px !important;
-    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.15) !important; /* Đổ bóng màu xanh lan tỏa */
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.15) !important;
     position: relative;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-/* Hiệu ứng nhè nhẹ khi rê chuột vào khung */
 .khung-form-them:hover {
     box-shadow: 0 15px 35px rgba(59, 130, 246, 0.25) !important;
     transform: translateY(-2px);
 }
-
-/* Gắn thêm cái nhãn "Khu vực nhập liệu" nổi lên trên viền */
 .khung-form-them::before {
     content: "✍️ KHU VỰC THÊM MỚI";
     position: absolute;
@@ -184,8 +181,6 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
     letter-spacing: 1px;
     box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3);
 }
-
-/* Tiêu đề bên trong khung */
 .khung-form-them h2 {
     color: #1e3a8a !important;
     margin-top: 5px !important;
@@ -194,8 +189,6 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
     border-bottom: 2px dashed #bfdbfe;
     padding-bottom: 12px;
 }
-
-/* Làm nút "Thêm hóa chất" to và bắt mắt hơn */
 .khung-form-them .nut-them-moi {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
     font-size: 16px !important;
@@ -204,7 +197,6 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4) !important;
     transition: 0.2s;
 }
-
 .khung-form-them .nut-them-moi:hover {
     transform: scale(1.05);
     background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
@@ -212,34 +204,7 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
 
 /* ================= TÍNH NĂNG MỚI ĐƯỢC BỔ SUNG ================= */
 
-/* 1. Khu vực cảnh báo HSE */
-.hse-alert-board {
-    background-color: #fff;
-    border-left: 5px solid #dc3545; 
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border-radius: 8px;
-    margin: 20px auto 40px auto;
-    width: 90%;
-    max-width: 1600px;
-    padding: 20px;
-    color: #333;
-}
-.alert-title {
-    color: #dc3545;
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-.alert-list { list-style: none; padding: 0; margin: 0; }
-.alert-list li { margin-bottom: 12px; display: flex; align-items: center; font-size: 15px; }
-.btn-resolve {
-    background-color: #0056b3; color: white; padding: 4px 10px;
-    border-radius: 4px; text-decoration: none; font-size: 13px; margin-left: 15px;
-}
-
-/* 2. Nút Form Hóa Chất */
+/* Nút Form Hóa Chất */
 .btn-open-form {
     background-color: #0d6efd; color: #fff; border: none;
     padding: 12px 25px; font-size: 16px; font-weight: bold;
@@ -247,7 +212,26 @@ table tfoot td { position: sticky; bottom: 0; z-index: 10; background-color: #f8
 }
 .btn-close-form { background-color: #495057; }
 
-/* 3. Sơ đồ: Thống kê & Nhấp nháy */
+/* Nút Xuất Excel */
+.btn-excel {
+    background-color: #10b981; 
+    color: #fff; 
+    border: none;
+    padding: 12px 25px; 
+    font-size: 16px; 
+    font-weight: bold;
+    border-radius: 30px; 
+    cursor: pointer; 
+    transition: all 0.3s;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
+.btn-excel:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Sơ đồ: Thống kê & Nhấp nháy */
 .badge-count {
     background-color: #0d6efd; color: white; padding: 2px 8px;
     border-radius: 12px; font-size: 13px; font-weight: bold; margin-left: 8px;
