@@ -16,49 +16,59 @@
     </form>
 </div>
 
-<!-- ĐẢM BẢO QUYỀN ADMIN HIỂN THỊ ĐƯỢC FORM THÊM -->
-{% if session.get('role') == 'admin' %}
-<div class="khung-form-them">
-    <h2>Thêm mới Hóa chất vào Bảng Tổng</h2>
-    <form id="form-them-ngam" class="form-them-luoi">
-        <input type="number" name="code_mua" placeholder="Code mua">
-        <input type="text" name="ten_sap" placeholder="Tên hóa chất trên SAP" required>
-        <input type="text" name="ten_thuong_goi" placeholder="Tên thường gọi">
-        
-        <select name="nguon_goc">
-            <option value="">-- Nguồn gốc --</option>
-            <option value="trong_nuoc">Trong nước</option>
-            <option value="ngoai_nuoc">Ngoài nước</option>
-        </select>
-
-        <select name="nha_may">
-            <option value="">-- Nhà máy --</option>
-            <option value="long_hau">Long Hậu</option>
-            <option value="go_vap">Gò Vấp</option>
-        </select>
-
-        <input type="text" name="so_cas" placeholder="Số CAS">
-        <input type="text" name="cong_thuc" placeholder="Công thức hóa học">
-        
-        <input type="text" name="khu_vuc_su_dung" placeholder="Khu vực (Chỉ ghi chú nhìn nhanh)">
-        <input type="hidden" name="is_master" value="1">
-        
-        <select name="dang_ton_tai">
-            <option value="">-- Dạng tồn tại --</option>
-            <option value="Rắn">Rắn</option>
-            <option value="Lỏng">Lỏng</option>
-            <option value="Khí">Khí</option>
-        </select>
-        
-        <input type="text" name="xuat_xu" placeholder="Xuất xứ">
-        <input type="number" name="so_luong" placeholder="Số lượng" required>
-        
-        <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
-            <button type="submit" class="nut-them-moi">+ Thêm vào Bảng Tổng</button>
-        </div>
-    </form>
+<!-- Nút kích hoạt Form trượt -->
+<div style="text-align: center; margin-bottom: 20px;">
+    <button id="btnToggleForm" class="btn-open-form" type="button">
+        + THÊM HÓA CHẤT MỚI
+    </button>
 </div>
-{% endif %}
+
+<!-- Thẻ div bọc cái form lại (Mặc định ẩn) -->
+<div id="formThemMoi" class="form-themMoi-container" style="display: none;">
+    <!-- ĐẢM BẢO QUYỀN ADMIN HIỂN THỊ ĐƯỢC FORM THÊM -->
+    {% if session.get('role') == 'admin' %}
+    <div class="khung-form-them">
+        <h2>Thêm mới Hóa chất vào Bảng Tổng</h2>
+        <form id="form-them-ngam" class="form-them-luoi">
+            <input type="number" name="code_mua" placeholder="Code mua">
+            <input type="text" name="ten_sap" placeholder="Tên hóa chất trên SAP" required>
+            <input type="text" name="ten_thuong_goi" placeholder="Tên thường gọi">
+            
+            <select name="nguon_goc">
+                <option value="">-- Nguồn gốc --</option>
+                <option value="trong_nuoc">Trong nước</option>
+                <option value="ngoai_nuoc">Ngoài nước</option>
+            </select>
+
+            <select name="nha_may">
+                <option value="">-- Nhà máy --</option>
+                <option value="long_hau">Long Hậu</option>
+                <option value="go_vap">Gò Vấp</option>
+            </select>
+
+            <input type="text" name="so_cas" placeholder="Số CAS">
+            <input type="text" name="cong_thuc" placeholder="Công thức hóa học">
+            
+            <input type="text" name="khu_vuc_su_dung" placeholder="Khu vực (Chỉ ghi chú nhìn nhanh)">
+            <input type="hidden" name="is_master" value="1">
+            
+            <select name="dang_ton_tai">
+                <option value="">-- Dạng tồn tại --</option>
+                <option value="Rắn">Rắn</option>
+                <option value="Lỏng">Lỏng</option>
+                <option value="Khí">Khí</option>
+            </select>
+            
+            <input type="text" name="xuat_xu" placeholder="Xuất xứ">
+            <input type="number" name="so_luong" placeholder="Số lượng" required>
+            
+            <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
+                <button type="submit" class="nut-them-moi">+ Thêm vào Bảng Tổng</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+</div> <!-- KẾT THÚC BỌC FORM -->
 
 <div class="khung-bang">
 <table>
@@ -197,4 +207,21 @@
     <h3 style="color: #1f2937; margin-bottom: 10px;">Bảng tổng chưa ghi nhận hóa chất nào.</h3>
 </div>
 {% endif %}
+
+<!-- Javascript điều khiển nút Ẩn/Hiện Form -->
+<script>
+    document.getElementById('btnToggleForm').addEventListener('click', function() {
+        var form = document.getElementById('formThemMoi');
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+            this.innerHTML = '- ĐÓNG FORM THÊM MỚI';
+            this.classList.add('btn-close-form');
+        } else {
+            form.style.display = 'none';
+            this.innerHTML = '+ THÊM HÓA CHẤT MỚI';
+            this.classList.remove('btn-close-form');
+        }
+    });
+</script>
+
 {% endblock %}

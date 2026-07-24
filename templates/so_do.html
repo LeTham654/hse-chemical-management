@@ -9,8 +9,11 @@
         <h2>{{ thong_tin['ten'] }}</h2>
         <div class="chuyen-list">
             {% for chuyen in thong_tin['chuyen'] %}
-                <a href="/bo-phan/{{ ma_nha_may }}/{{ chuyen }}" class="chuyen-btn">
+                <a href="/bo-phan/{{ ma_nha_may }}/{{ chuyen }}" class="chuyen-btn btn-department" style="position: relative; display: inline-block;">
                     📍 {{ chuyen }}
+                    <!-- Thêm con số thống kê mẫu và chấm cảnh báo đỏ -->
+                    <span class="badge-count">12</span> 
+                    <span class="warning-pulse" title="Thiếu thông tin MSDS"></span>
                 </a>
             {% endfor %}
         </div>
